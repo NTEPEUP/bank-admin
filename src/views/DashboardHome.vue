@@ -18,7 +18,7 @@
                 </v-card>
             </section>
 
-            <v-row class="metric-grid" dense>
+            <v-row class="metric-grid" density="comfortable">
                 <v-col v-for="metric in metrics" :key="metric.label" cols="12" md="4">
                     <v-card class="metric-card" rounded="xl" elevation="4">
                         <div class="metric-card__icon">
@@ -31,7 +31,7 @@
                 </v-col>
             </v-row>
 
-            <v-row dense>
+            <v-row density="comfortable">
                 <v-col cols="12" lg="8">
                     <v-card class="panel-card" rounded="xl" elevation="4">
                         <v-card-title class="panel-card__title">Actividad operativa reciente</v-card-title>

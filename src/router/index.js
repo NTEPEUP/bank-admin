@@ -4,7 +4,12 @@ import LoginView from '../views/LoginView.vue'
 const SESSION_KEY = 'bank-auth-session'
 
 function hasSession() {
-  return Boolean(localStorage.getItem(SESSION_KEY))
+  try {
+    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}')
+    return Boolean(session.token || session.accessToken || session.jwt || session.access_token)
+  } catch {
+    return false
+  }
 }
 
 const router = createRouter({

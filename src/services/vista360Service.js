@@ -3,7 +3,7 @@ const SESSION_KEY = 'bank-auth-session'
 function getToken() {
   try {
     const s = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}')
-    return s.token || ''
+    return s.token || s.accessToken || s.jwt || s.access_token || ''
   } catch {
     return ''
   }

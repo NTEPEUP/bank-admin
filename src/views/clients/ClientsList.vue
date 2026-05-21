@@ -13,7 +13,11 @@ async function load() {
     error.value = ''
     try {
         const data = await clientService.fetchClients()
-        items.value = Array.isArray(data) ? data : data.items || []
+        const sourceItems = Array.isArray(data) ? data : data.items || []
+        items.value = sourceItems.map((client) => ({
+            ...client,
+            clientId: client?.id ?? client?.idCliente ?? client?.clienteId ?? null,
+        }))
     } catch (err) {
         error.value = err.message || String(err)
     } finally {
@@ -26,7 +30,16 @@ function goNew() {
 }
 
 function edit(id) {
+    if (!id) {
+        error.value = 'No se pudo identificar el cliente para editarlo'
+        return
+    }
+
     router.push({ name: 'client-edit', params: { id } })
+}
+
+function unwrapItem(item) {
+    return item?.raw ?? item ?? {}
 }
 
 onMounted(load)
@@ -41,13 +54,7 @@ onMounted(load)
 
         <v-alert v-if="error" type="error">{{ error }}</v-alert>
 
-        <v-data-table :items="items" :loading="loading" dense>
-            <template #item.actions="{ item }">
-                <v-btn icon small @click="edit(item.id)">
-                    <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-            </template>
-
+        <v-data-table :items="items" :loading="loading" density="comfortable">
             <template #headers>
                 <tr>
                     <th>Id</th>
@@ -60,13 +67,16 @@ onMounted(load)
             </template>
             <template #item="{ item }">
                 <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.dpi }}</td>
-                    <td>{{ item.nombres }} {{ item.apellidos }}</td>
-                    <td>{{ item.correo }}</td>
-                    <td>{{ item.estadoCliente }}</td>
+                    <td>{{ unwrapItem(item).clientId }}</td>
+                    <td>{{ unwrapItem(item).dpi }}</td>
+                    <td>{{ unwrapItem(item).nombres }} {{ unwrapItem(item).apellidos }}</td>
+                    <td>{{ unwrapItem(item).correo }}</td>
+                    <td>{{ unwrapItem(item).estadoCliente }}</td>
                     <td>
-                        <v-btn icon small @click="edit(item.id)"><v-icon>mdi-pencil</v-icon></v-btn>
+                        <v-btn icon size="small" :disabled="!unwrapItem(item).clientId"
+                            @click.stop="edit(unwrapItem(item).clientId)">
+                            <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
                     </td>
                 </tr>
             </template>

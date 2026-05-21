@@ -33,17 +33,28 @@ async function load() {
         loading.value = false
     }
 }
+const snackbar = ref(false)
+const snackbarMessage = ref('')
 
 async function submit() {
     error.value = ''
     loading.value = true
+
     try {
         if (id) {
             await clientService.updateClient(id, form)
+            snackbarMessage.value = 'Cliente actualizado exitosamente'
         } else {
             await clientService.createClient(form)
+            snackbarMessage.value = 'Cliente creado exitosamente'
         }
+
+        snackbar.value = true
+
+        await new Promise(resolve => setTimeout(resolve, 1500))
+
         router.push({ name: 'clients' })
+
     } catch (err) {
         error.value = err.message || String(err)
     } finally {
@@ -98,8 +109,13 @@ onMounted(load)
             </div>
         </v-form>
     </div>
+    <v-snackbar v-model="snackbar" color="success" timeout="3000" location="top right">
+        {{ snackbarMessage }}
+        <template #actions>
+            <v-btn variant="text" @click="snackbar = false">Cerrar</v-btn>
+        </template>
+    </v-snackbar>
 </template>
-
 <style scoped>
 .form-actions {
     margin-top: 1rem;

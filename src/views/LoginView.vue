@@ -46,8 +46,14 @@ async function handleLogin() {
             throw new Error(payload?.message || 'No fue posible iniciar sesión')
         }
 
+        const token = payload.token || payload.accessToken || payload.jwt || payload.access_token || ''
+
+        if (!token) {
+            throw new Error('La API no devolvió un token de acceso válido')
+        }
+
         const session = {
-            token: payload.token,
+            token,
             roleName: payload.roleName,
             nombres: payload.nombres,
             apellidos: payload.apellidos,
