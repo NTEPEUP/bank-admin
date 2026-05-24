@@ -8,6 +8,7 @@ const dpi = ref('')
 const codigo = ref('')
 const loading = ref(false)
 const error = ref('')
+// El botón se habilitará dinámicamente según el contenido de los inputs
 
 async function searchByDpi() {
     error.value = ''
@@ -40,21 +41,28 @@ async function searchByCodigo() {
 
 <template>
     <div>
-        <h2>Vista 360 — Buscar cliente</h2>
+        <v-card>
+            <v-card-title class="d-flex justify-center">
+                <v-chip color="success">
+                        VISTA 360
+                </v-chip>
+                
+            </v-card-title>
+        </v-card>
         <v-card class="pa-4">
             <v-row>
                 <v-col cols="12" md="6">
                     <v-text-field v-model="dpi" label="Buscar por DPI" clearable />
                 </v-col>
                 <v-col cols="12" md="6" class="d-flex align-center">
-                    <v-btn color="primary" @click="searchByDpi" :loading="loading">Buscar</v-btn>
+                    <v-btn color="primary" @click="searchByDpi" :loading="loading" :disabled="!dpi || !dpi.trim()">Buscar</v-btn>
                 </v-col>
 
                 <v-col cols="12" md="6">
                     <v-text-field v-model="codigo" label="Buscar por código" clearable />
                 </v-col>
                 <v-col cols="12" md="6" class="d-flex align-center">
-                    <v-btn color="primary" @click="searchByCodigo" :loading="loading">Buscar</v-btn>
+                    <v-btn color="primary" @click="searchByCodigo" :loading="loading" :disabled="!codigo || !codigo.trim()">Buscar</v-btn>
                 </v-col>
             </v-row>
 

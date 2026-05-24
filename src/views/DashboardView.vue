@@ -1,8 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-const SESSION_KEY = 'bank-auth-session'
+import { clearSession, readSession } from '../services/api.js'
 
 const router = useRouter()
 const session = ref(null)
@@ -14,6 +13,7 @@ const navItems = [
     { title: 'Clientes', icon: 'mdi-account-multiple', to: { name: 'clients' } },
     { title: 'Vista 360', icon: 'mdi-eye', to: { name: 'vista360' } },
     { title: 'Cierres', icon: 'mdi-calendar-check-outline' },
+    { title: 'Usuarios', icon: 'mdi-bank-outline', to: { name: 'users-hub' } },
     { title: 'Seguridad', icon: 'mdi-shield-lock-outline' },
 ]
 
@@ -29,20 +29,6 @@ const activity = [
     { time: '08:23', title: 'Cierre de lote', detail: 'Proceso de conciliación completado' },
     { time: '07:58', title: 'Bloqueo preventivo', detail: 'Usuario temporalmente restringido' },
 ]
-
-function readSession() {
-    const rawSession = localStorage.getItem(SESSION_KEY)
-
-    if (!rawSession) {
-        return null
-    }
-
-    try {
-        return JSON.parse(rawSession)
-    } catch {
-        return null
-    }
-}
 
 const fullName = computed(() => {
     if (!session.value) {
@@ -65,7 +51,7 @@ const initials = computed(() => {
 })
 
 function logout() {
-    localStorage.removeItem(SESSION_KEY)
+    clearSession()
     router.replace({ name: 'login' })
 }
 
@@ -78,10 +64,9 @@ onMounted(() => {
     <v-app-bar class="dashboard-topbar" elevation="0">
         <template #prepend>
             <div class="topbar-brand">
-                <div class="topbar-brand__mark">BB</div>
+                <div class="topbar-brand__mark"><Search>S</Search></div>
                 <div>
-                    <div class="topbar-brand__label">Core bancario</div>
-                    <div class="topbar-brand__sub">Panel interno de empleados</div>
+                    <div class="topbar-brand__label">SHENSEI BANK</div>
                 </div>
             </div>
         </template>
@@ -106,16 +91,16 @@ onMounted(() => {
 
         <v-list nav density="comfortable" class="mt-4">
             <v-list-item v-for="item in navItems" :key="item.title" :prepend-icon="item.icon" :title="item.title"
-                :to="item.to" clickable />
+                :to="item.to" clickable class="items" />
         </v-list>
 
-        <v-card class="drawer-note" variant="tonal" color="primary">
+        <!-- <v-card class="drawer-note" variant="tonal" color="primary">
             <v-card-title class="text-subtitle-1 font-weight-bold">Acceso interno</v-card-title>
             <v-card-text>
                 Este espacio representa el core de empleados. El acceso de clientes vive en otro flujo con
                 otro diseño y otras reglas.
             </v-card-text>
-        </v-card>
+        </v-card> -->
     </v-navigation-drawer>
 
     <v-main class="dashboard-main">
@@ -136,14 +121,24 @@ onMounted(() => {
     gap: 0.85rem;
 }
 
-.topbar-brand__mark,
+.topbar-brand__mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #06396c 0%, #007a65 100%);
+    color: white;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
 .drawer-brand__icon {
     display: grid;
     place-items: center;
     width: 46px;
     height: 46px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #06396c 0%, #007a65 100%);
+    border-radius: 100px;
+    background: linear-gradient(135deg, #1870c9 0%, #1354b6 100%);
     color: white;
     font-weight: 800;
     letter-spacing: 0.05em;
@@ -291,6 +286,10 @@ onMounted(() => {
 .quick-actions {
     display: grid;
     gap: 0.8rem;
+}
+.items:focus {
+    background-color: rgba(6, 115, 10, 0.04) !important;
+
 }
 
 @media (max-width: 1260px) {

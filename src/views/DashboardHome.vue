@@ -1,5 +1,5 @@
 <template>
-    <v-main class="dashboard-main">
+    <div class="dashboard-main">
         <div class="dashboard-shell">
             <section class="hero-card">
                 <div>
@@ -63,27 +63,13 @@
                 </v-col>
             </v-row>
         </div>
-    </v-main>
+    </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 
-const SESSION_KEY = 'bank-auth-session'
-
-function readSession() {
-    const rawSession = localStorage.getItem(SESSION_KEY)
-
-    if (!rawSession) {
-        return null
-    }
-
-    try {
-        return JSON.parse(rawSession)
-    } catch {
-        return null
-    }
-}
+import { readSession } from '../services/api.js'
 
 const session = readSession() || {}
 

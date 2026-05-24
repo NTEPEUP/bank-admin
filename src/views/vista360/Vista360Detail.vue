@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import vista360Service from '@/services/vista360Service'
 import clientService from '@/services/clientService'
 
 const route = useRoute()
 const id = route.params.id
+const router = useRouter()
 
 const client = ref(null)
 const cuentas = ref([])
@@ -102,20 +103,45 @@ async function loadAll() {
 }
 
 onMounted(loadAll)
+
+function goBack() {
+    router.push({ name: 'vista360' })
+}
+
+function refresh() {
+    productsLoaded.value = false
+    loadAll()
+}
 </script>
 
 <template>
     <div>
-        <div class="header-row">
-            <div>
-                <h2>Vista 360 — {{ client?.nombres ? `${client.nombres} ${client.apellidos}` : 'Cliente' }}</h2>
-                <div class="muted">DPI: {{ client?.dpi }} — ID: {{ client?.idCliente }}</div>
-            </div>
-        </div>
+        <v-toolbar flat color="transparent" class="px-0">
+            <v-btn icon @click="goBack" aria-label="Regresar">
+                <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <v-toolbar-title class="ml-2">
+                <div class="title-line">Vista 360</div>
+                <div class="subtitle-line">{{ client?.nombres ? `${client.nombres} ${client.apellidos}` : 'Cliente' }}</div>
+            </v-toolbar-title>
+            <v-spacer />
+            <v-btn text small @click="refresh">
+                <v-icon left>mdi-refresh</v-icon>
+                Refrescar
+            </v-btn>
+            <v-btn text small color="primary" @click="$router.push({ name: 'client-edit', params: { id: client?.idCliente } })" v-if="client?.idCliente">
+                <v-icon left>mdi-account-edit</v-icon>
+                Editar cliente
+            </v-btn>
+        </v-toolbar>
+
+        <div class="muted">DPI: {{ client?.dpi }} — ID: {{ client?.idCliente }}</div>
 
         <v-alert v-if="error" type="error">{{ error }}</v-alert>
 
-        <v-card class="mt-4">
+        <div class="card-wrapper mt-4">
+            <transition name="fade">
+                <v-card>
             <v-tabs v-model="activeTab" background-color="transparent">
                 <v-tab>Datos generales</v-tab>
                 <v-tab @click="loadProducts">Productos</v-tab>
@@ -128,14 +154,28 @@ onMounted(loadAll)
                     <v-card-text>
                         <v-row>
                             <v-col cols="12" md="6">
-                                <div><strong>Nombre:</strong> {{ client?.nombres }} {{ client?.apellidos }}</div>
-                                <div><strong>Correo:</strong> {{ client?.correo }}</div>
-                                <div><strong>Teléfono:</strong> {{ client?.telefono }}</div>
+                                <div v-if="loading" class="skeleton">
+                                    <div class="skeleton-line" style="width:70%"></div>
+                                    <div class="skeleton-line" style="width:50%"></div>
+                                    <div class="skeleton-line" style="width:40%"></div>
+                                </div>
+                                <div v-else>
+                                    <div><strong>Nombre:</strong> {{ client?.nombres }} {{ client?.apellidos }}</div>
+                                    <div><strong>Correo:</strong> {{ client?.correo }}</div>
+                                    <div><strong>Teléfono:</strong> {{ client?.telefono }}</div>
+                                </div>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <div><strong>Dirección:</strong> {{ client?.direccion }}</div>
-                                <div><strong>Fecha nacimiento:</strong> {{ client?.fechaNacimiento }}</div>
-                                <div><strong>Estado:</strong> {{ client?.estadoCliente }}</div>
+                                <div v-if="loading" class="skeleton">
+                                    <div class="skeleton-line" style="width:80%"></div>
+                                    <div class="skeleton-line" style="width:60%"></div>
+                                    <div class="skeleton-line" style="width:40%"></div>
+                                </div>
+                                <div v-else>
+                                    <div><strong>Dirección:</strong> {{ client?.direccion }}</div>
+                                    <div><strong>Fecha nacimiento:</strong> {{ client?.fechaNacimiento }}</div>
+                                    <div><strong>Estado:</strong> {{ client?.estadoCliente }}</div>
+                                </div>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -223,9 +263,34 @@ onMounted(loadAll)
                 <v-window-item :value="2">
                     <v-card-text>
                         <div v-if="reclamos && reclamos.length">
+                            <v-btn small color="primary" class="mb-3"
+                                @click="$router.push({ name: 'reclamo-create', query: { clienteId: client?.idCliente } })">
+                                <v-icon left>mdi-plus</v-icon>
+                                Nuevo Reclamo
+                            </v-btn>
                             <v-list>
+                                <v-data-table :items="reclamos" :headers="[
+                                    { title: 'Caso', key: 'titulo' },
+                                    { title: 'Tipo', key: 'tipoCaso' },
+                                    {title: 'Categoría', key: 'categoria' },
+                                    {title: 'Descripción', key: 'descripcion' },
+                                    { title: 'Estado', key: 'estado' },
+                                    { title: 'Fecha creación', key: 'fechaCreacion' }
+                                ]" class="elevation-1">
+                                    <template #item="{ item }">
+                                        <tr>
+                                            <td>{{ item.titulo || item.tipoCaso }}</td>
+                                            <td>{{ item.tipoCaso }}</td>
+                                            <td>{{ item.categoria }}</td>
+                                            <td>{{ item.descripcion }}</td>
+                                            <td>{{ item.estado }}</td>
+                                            <td>{{ item.fechaCreacion }}</td>
+                                        </tr>
+                                    </template>
+
+                                </v-data-table>
                                 <v-list-item v-for="r in reclamos" :key="r.id" :title="r.titulo || r.tipo"
-                                    :subtitle="`${r.estado} — ${r.creadoEn}`" />
+                                    :subtitle="`${r.estado} — ${r.fechaCreacion}`" />
                             </v-list>
                         </div>
                         <div v-else>No hay solicitudes o reclamos</div>
@@ -244,7 +309,14 @@ onMounted(loadAll)
                     </v-card-text>
                 </v-window-item>
             </v-window>
-        </v-card>
+                </v-card>
+            </transition>
+
+            <div v-if="loading" class="overlay">
+                <v-progress-circular indeterminate color="primary" size="56"></v-progress-circular>
+                <div class="overlay-text">Cargando...</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -258,5 +330,59 @@ onMounted(loadAll)
 .muted {
     color: rgba(0, 0, 0, 0.6);
     font-size: 0.95rem
+}
+
+.title-line {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.subtitle-line {
+    font-size: 0.9rem;
+    color: rgba(0,0,0,0.65);
+}
+
+.px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Fade transition */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 220ms ease;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
+
+/* Overlay */
+.card-wrapper { position: relative; }
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.7);
+    z-index: 20;
+}
+.overlay-text {
+    margin-top: 10px;
+    color: rgba(0,0,0,0.7);
+}
+
+/* Skeleton */
+.skeleton { display:flex; flex-direction:column; gap:8px; }
+.skeleton-line {
+    height: 12px;
+    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+    border-radius: 6px;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0 }
+    100% { background-position: -200% 0 }
 }
 </style>

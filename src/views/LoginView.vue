@@ -1,9 +1,9 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { buildApiUrl, saveSession } from '../services/api.js'
 
-const API_URL = 'http://localhost:8080/api/auth/login'
-const SESSION_KEY = 'bank-auth-session'
+const API_URL = buildApiUrl('/auth/login')
 
 const router = useRouter()
 
@@ -21,10 +21,7 @@ const valuePropositions = [
         title: 'Core interno',
         text: 'Una experiencia para personal autorizado, enfocada en operación, seguridad y control.',
     },
-    {
-        title: 'Acceso seguro',
-        text: 'Autenticación contra API, sesión persistente y redirección automática al panel operativo.',
-    },
+  
 ]
 
 async function handleLogin() {
@@ -47,9 +44,14 @@ async function handleLogin() {
         }
 
         const token = payload.token || payload.accessToken || payload.jwt || payload.access_token || ''
+        const roleName = payload.roleName?.toString().trim().toUpperCase() || ''
 
         if (!token) {
             throw new Error('La API no devolvió un token de acceso válido')
+        }
+
+        if (roleName === 'CLIENTE') {
+            throw new Error('El rol CLIENTE no tiene acceso al sistema')
         }
 
         const session = {
@@ -60,8 +62,8 @@ async function handleLogin() {
             username: credentials.username,
         }
 
-        localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-        router.replace({ name: 'dashboard' })
+        saveSession(session)
+        router.replace({ name: 'dashboard-home' })
     } catch (err) {
         error.value = err?.message || 'No fue posible iniciar sesión'
     } finally {
@@ -75,18 +77,18 @@ async function handleLogin() {
         <section class="hero-panel">
             <div class="hero-panel__tag">CORE INTERNO</div>
             <h1>Acceso de personal para operación bancaria</h1>
-            <p>
+           <!--  <p>
                 Este acceso está reservado para empleados autorizados. Aquí se administran
                 operaciones internas, validaciones y tareas críticas del banco.
-            </p>
+            </p> -->
 
-            <div class="hero-grid">
+           <!--  <div class="hero-grid">
                 <v-card v-for="item in valuePropositions" :key="item.title" class="hero-metric" variant="tonal"
                     color="primary">
                     <v-card-title>{{ item.title }}</v-card-title>
                     <v-card-text>{{ item.text }}</v-card-text>
                 </v-card>
-            </div>
+            </div> -->
         </section>
 
         <section class="login-panel">
@@ -98,7 +100,7 @@ async function handleLogin() {
                         <p>Ingresa tus credenciales de empleado para continuar.</p>
                     </div>
 
-                    <v-chip color="primary" variant="flat" size="small" prepend-icon="mdi-shield-check">
+                    <v-chip color="success" style="font-size: 9px;" prepend-icon="mdi-shield-check">
                         Personal autorizado
                     </v-chip>
                 </div>
@@ -119,11 +121,9 @@ async function handleLogin() {
                         @click:append-inner="showPassword = !showPassword" required />
 
                     <div class="login-actions">
-                        <span class="login-help">Core de empleados conectado a la API local.</span>
 
-                        <v-btn type="submit" color="primary" size="large" block :loading="loading"
-                            prepend-icon="mdi-login">
-                            Entrar al core
+                        <v-btn type="submit" color="success" size="large" block :loading="loading">
+                            Acceder
                         </v-btn>
                     </div>
                 </v-form>
