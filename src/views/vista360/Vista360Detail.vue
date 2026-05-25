@@ -229,17 +229,17 @@ function refresh() {
                                                     <div class="detail-row">
                                                         <span class="detail-label">Teléfono</span>
                                                         <span class="detail-value">{{ client?.telefono || 'N/D'
-                                                        }}</span>
+                                                            }}</span>
                                                     </div>
                                                     <div class="detail-row">
                                                         <span class="detail-label">Dirección</span>
                                                         <span class="detail-value">{{ client?.direccion || 'N/D'
-                                                        }}</span>
+                                                            }}</span>
                                                     </div>
                                                     <div class="detail-row">
                                                         <span class="detail-label">Fecha de nacimiento</span>
                                                         <span class="detail-value">{{ client?.fechaNacimiento || 'N/D'
-                                                        }}</span>
+                                                            }}</span>
                                                     </div>
                                                 </div>
                                             </v-card-text>
