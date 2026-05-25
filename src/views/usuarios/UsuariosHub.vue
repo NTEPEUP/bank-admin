@@ -50,12 +50,6 @@ function go(routeName) {
       <v-card class="hero-panel" variant="tonal" color="primary">
         <div class="hero-panel__title">Reglas del módulo</div>
         <ul class="hero-list">
-          <li>Listado con tabs: Clientes e Internos.</li>
-          <li>Búsqueda por username para operación rápida.</li>
-          <li>Activación/desactivación por PUT enviando boolean.</li>
-          <li>Clientes: buscar por DPI y autocompletar datos.</li>
-          <li>Internos: captura manual con rol editable.</li>
-          <li>El API de roles se consume desde <strong>/api/roles</strong>.</li>
         </ul>
       </v-card>
     </v-card>

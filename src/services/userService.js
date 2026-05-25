@@ -1,12 +1,37 @@
 import { apiRequest, getToken } from './api.js'
 
-export async function fetchRoles() {
-  const token = getToken()
+function normalizeRolesPayload(payload) {
+  if (Array.isArray(payload)) {
+    return payload
+  }
 
-  return apiRequest('/roles', {
+  if (!payload || typeof payload !== 'object') {
+    return []
+  }
+
+  const candidates = [
+    payload.data,
+    payload.items,
+    payload.roles,
+    payload.results,
+    payload.records,
+  ]
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      return candidate
+    }
+  }
+
+  return []
+}
+
+export async function fetchRoles() {
+  const payload = await apiRequest('/roles', {
     method: 'GET',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
   })
+
+  return normalizeRolesPayload(payload)
 }
 
 export async function createUser(payload) {
