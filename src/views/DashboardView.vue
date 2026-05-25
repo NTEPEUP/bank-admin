@@ -7,14 +7,14 @@ const router = useRouter()
 const session = ref(null)
 
 const navItems = [
-    { title: 'Resumen', icon: 'mdi-view-dashboard-outline' },
-    { title: 'Operaciones', icon: 'mdi-cog-outline' },
-    { title: 'Autorizaciones', icon: 'mdi-shield-check-outline' },
+    //{ title: 'Resumen', icon: 'mdi-view-dashboard-outline' },
+    //{ title: 'Operaciones', icon: 'mdi-cog-outline' },
+    //{ title: 'Autorizaciones', icon: 'mdi-shield-check-outline' },
     { title: 'Clientes', icon: 'mdi-account-multiple', to: { name: 'clients' } },
     { title: 'Vista 360', icon: 'mdi-eye', to: { name: 'vista360' } },
-    { title: 'Cierres', icon: 'mdi-calendar-check-outline' },
+    //{ title: 'Cierres', icon: 'mdi-calendar-check-outline' },
     { title: 'Usuarios', icon: 'mdi-bank-outline', to: { name: 'users-hub' } },
-    { title: 'Seguridad', icon: 'mdi-shield-lock-outline' },
+    //{ title: 'Seguridad', icon: 'mdi-shield-lock-outline' },
 ]
 
 const metrics = [
@@ -64,7 +64,9 @@ onMounted(() => {
     <v-app-bar class="dashboard-topbar" elevation="0">
         <template #prepend>
             <div class="topbar-brand">
-                <div class="topbar-brand__mark"><Search>S</Search></div>
+                <div class="topbar-brand__mark">
+                    <Search>S</Search>
+                </div>
                 <div>
                     <div class="topbar-brand__label">SHENSEI BANK</div>
                 </div>
@@ -132,6 +134,7 @@ onMounted(() => {
     font-weight: 800;
     letter-spacing: 0.05em;
 }
+
 .drawer-brand__icon {
     display: grid;
     place-items: center;
@@ -287,6 +290,7 @@ onMounted(() => {
     display: grid;
     gap: 0.8rem;
 }
+
 .items:focus {
     background-color: rgba(6, 115, 10, 0.04) !important;
 

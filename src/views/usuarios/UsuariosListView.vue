@@ -139,10 +139,7 @@ onMounted(loadUsers)
       <div>
         <div class="eyebrow">Gestión operativa</div>
         <h1>Listado de usuarios</h1>
-        <p>
-          Separa clientes e internos con tabs, busca por usuario y desactiva/activa con
-          <strong>PUT /api/usuarios/{id}</strong> enviando <strong>true/false</strong>.
-        </p>
+
       </div>
 
       <v-btn color="primary" variant="tonal" :loading="loading" @click="loadUsers">
@@ -155,14 +152,9 @@ onMounted(loadUsers)
 
     <v-card class="toolbar-card" elevation="2">
       <v-card-text>
-        <v-row align="center" dense>
+        <v-row align="center">
           <v-col cols="12" md="8">
-            <v-text-field
-              v-model="search"
-              label="Buscar por usuario"
-              prepend-inner-icon="mdi-magnify"
-              clearable
-            />
+            <v-text-field v-model="search" label="Buscar por usuario" prepend-inner-icon="mdi-magnify" clearable />
           </v-col>
           <v-col cols="12" md="4" class="chips-col">
             <v-chip color="success" variant="tonal">Clientes: {{ countClientes }}</v-chip>
@@ -181,14 +173,8 @@ onMounted(loadUsers)
       <v-divider />
 
       <v-card-text>
-        <v-data-table
-          :headers="tableHeaders"
-          :items="filteredUsers"
-          :loading="loading"
-          item-value="id"
-          loading-text="Cargando usuarios..."
-          no-data-text="No hay usuarios para los filtros seleccionados"
-        >
+        <v-data-table :headers="tableHeaders" :items="filteredUsers" :loading="loading" item-value="id"
+          loading-text="Cargando usuarios..." no-data-text="No hay usuarios para los filtros seleccionados">
           <template #item.estadoVisual="{ item }">
             <v-chip :color="getIsActive(item) ? 'success' : 'error'" size="small" variant="tonal">
               {{ stateLabel(item) }}
@@ -196,11 +182,7 @@ onMounted(loadUsers)
           </template>
 
           <template #item.actions="{ item }">
-            <v-btn
-              size="small"
-              :color="getIsActive(item) ? 'warning' : 'success'"
-              @click="askToggle(item)"
-            >
+            <v-btn size="small" :color="getIsActive(item) ? 'warning' : 'success'" @click="askToggle(item)">
               {{ getIsActive(item) ? 'Desactivar' : 'Activar' }}
             </v-btn>
           </template>

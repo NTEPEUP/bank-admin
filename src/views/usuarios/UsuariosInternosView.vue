@@ -75,7 +75,6 @@ onMounted(loadRoles)
       <div>
         <div class="eyebrow">Usuarios internos</div>
         <h1>Crear usuario manualmente</h1>
-        <p>Diseñado para perfiles internos. Los campos se capturan uno por uno y el rol se toma de <strong>/api/roles</strong>.</p>
       </div>
 
       <v-chip color="primary" variant="tonal" label>
@@ -94,7 +93,8 @@ onMounted(loadRoles)
               <v-text-field v-model="form.username" label="Usuario" prepend-inner-icon="mdi-account" required />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field v-model="form.password" label="Contraseña" type="password" prepend-inner-icon="mdi-lock" required />
+              <v-text-field v-model="form.password" label="Contraseña" type="password" prepend-inner-icon="mdi-lock"
+                required />
             </v-col>
 
             <v-col cols="12" md="6">
@@ -116,21 +116,14 @@ onMounted(loadRoles)
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-select
-                v-model="form.roleName"
-                :items="roleItems"
-                item-title="title"
-                item-value="value"
-                :loading="loadingRoles"
-                label="Rol"
-                prepend-inner-icon="mdi-shield-account"
-                hint="Selecciona un rol interno"
-                persistent-hint
-              />
+              <v-select v-model="form.roleName" :items="roleItems" item-title="title" item-value="value"
+                :loading="loadingRoles" label="Rol" prepend-inner-icon="mdi-shield-account"
+                hint="Selecciona un rol interno" persistent-hint />
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-text-field value="No aplica" label="Cliente asociado" readonly variant="solo-filled" prepend-inner-icon="mdi-link-variant" />
+              <v-text-field value="No aplica" label="Cliente asociado" readonly variant="solo-filled"
+                prepend-inner-icon="mdi-link-variant" />
             </v-col>
           </v-row>
 
