@@ -124,7 +124,7 @@ async function submit() {
     <v-card class="search-card" elevation="3">
       <v-card-text>
         <div class="section-title">1. Buscar cliente</div>
-        <v-row dense align="center">
+        <v-row align="center">
           <v-col cols="12" md="8">
             <v-text-field v-model="search.dpi" label="DPI del cliente" prepend-inner-icon="mdi-card-account-details" />
           </v-col>
@@ -138,7 +138,7 @@ async function submit() {
     <v-card class="client-card" elevation="3" v-if="hasClient">
       <v-card-text>
         <div class="section-title">2. Datos del cliente</div>
-        <v-row dense>
+        <v-row>
           <v-col cols="12" md="6">
             <v-text-field :model-value="client?.nombres" label="Nombres" readonly variant="solo-filled" />
           </v-col>
@@ -162,7 +162,7 @@ async function submit() {
       <v-card-text>
         <div class="section-title">3. Crear usuario</div>
         <v-form @submit.prevent="submit">
-          <v-row dense>
+          <v-row>
             <v-col cols="12" md="6">
               <v-text-field v-model="form.username" label="Usuario" prepend-inner-icon="mdi-account" required />
             </v-col>
